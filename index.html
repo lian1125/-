@@ -2,250 +2,673 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#071b16">
-<title>百家樂牌靴分析器</title>
+<title>百家樂牌靴分析器 V2</title>
+
 <style>
+:root{
+  --bg:#061713;
+  --panel:#0d2921;
+  --panel2:#12352b;
+  --border:#285147;
+  --gold:#e5c363;
+  --text:#f7f7f7;
+  --muted:#9eb5ad;
+  --banker:#ff8585;
+  --player:#75adff;
+  --tie:#55d59c;
+  --danger:#ff8585;
+}
+
 *{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
 }
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,
+  "PingFang TC","Microsoft JhengHei",sans-serif;
+}
+
 body{
-    margin:0;
-    background:#071b16;
-    color:#fff;
-    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei",sans-serif;
+  min-height:100vh;
 }
-.app{
-    max-width:600px;
-    margin:auto;
-    padding:25px 15px 40px;
-}
-h1{
-    text-align:center;
-    color:#e8c568;
-    font-size:26px;
-    margin:10px 0 5px;
-}
-.subtitle{
-    text-align:center;
-    color:#9bb1aa;
-    font-size:13px;
-    margin-bottom:20px;
-}
-.card{
-    background:#0e2a22;
-    border:1px solid #285147;
-    border-radius:18px;
-    padding:16px;
-    margin-bottom:15px;
-}
-.title{
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:12px;
-}
-.shoe{
-    text-align:center;
-}
-.remaining{
-    font-size:34px;
-    font-weight:900;
-    color:#f2d77b;
-}
-.bar{
-    height:10px;
-    background:#1d4036;
-    border-radius:20px;
-    overflow:hidden;
-    margin:12px 0 6px;
-}
-.bar div{
-    height:100%;
-    background:#e1bc5d;
-    width:100%;
-}
-.small{
-    color:#9bb1aa;
-    font-size:13px;
-}
-.probabilities{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:8px;
-}
-.prob{
-    background:#12352b;
-    border-radius:12px;
-    padding:12px 5px;
-    text-align:center;
-}
-.prob div:first-child{
-    color:#a7bbb4;
-    font-size:14px;
-}
-.prob div:last-child{
-    font-size:24px;
-    font-weight:900;
-    margin-top:5px;
-}
-.banker{
-    color:#ff8888;
-}
-.player{
-    color:#75adff;
-}
-.tie{
-    color:#55d49b;
-}
+
 button{
-    width:100%;
-    border:0;
-    border-radius:12px;
-    padding:14px;
-    font-size:16px;
-    font-weight:bold;
-    background:#183d32;
-    color:white;
-    margin-top:8px;
+  font-family:inherit;
 }
-button:active{
-    transform:scale(.97);
+
+.app{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  padding:
+    max(14px,env(safe-area-inset-top))
+    14px
+    max(35px,env(safe-area-inset-bottom));
 }
-.gold{
-    background:linear-gradient(135deg,#c99d3b,#f0d477);
-    color:#152219;
+
+.header{
+  text-align:center;
+  padding:10px 0 18px;
 }
-.danger{
-    color:#ff8989;
+
+.header h1{
+  margin:0;
+  color:var(--gold);
+  font-size:26px;
 }
-.notice{
-    text-align:center;
-    line-height:1.7;
-    color:#b4c5bf;
-    font-size:14px;
+
+.header p{
+  margin:7px 0 0;
+  color:var(--muted);
+  font-size:13px;
 }
-@media(max-width:380px){
-    h1{
-        font-size:23px;
-    }
-    .remaining{
-        font-size:29px;
-    }
+
+.panel{
+  background:linear-gradient(145deg,#103027,#0a211b);
+  border:1px solid var(--border);
+  border-radius:19px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 7px 25px rgba(0,0,0,.2);
+}
+
+.title{
+  font-size:18px;
+  font-weight:900;
+  margin-bottom:13px;
+}
+
+.center{
+  text-align:center;
+}
+
+.remaining{
+  color:var(--gold);
+  font-size:33px;
+  font-weight:900;
+}
+
+.progress{
+  height:9px;
+  margin:11px 0 6px;
+  background:#1b4035;
+  border-radius:99px;
+  overflow:hidden;
+}
+
+.progress-bar{
+  height:100%;
+  width:100%;
+  background:linear-gradient(90deg,#bd9234,#f0d779);
+  transition:width .25s;
+}
+
+.muted{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.prob-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.prob{
+  text-align:center;
+  background:var(--panel2);
+  border-radius:14px;
+  padding:13px 4px;
+}
+
+.prob-label{
+  color:var(--muted);
+  font-size:14px;
+}
+
+.prob-value{
+  font-size:24px;
+  font-weight:900;
+  margin-top:4px;
+}
+
+.banker{color:var(--banker)}
+.player{color:var(--player)}
+.tie{color:var(--tie)}
+
+.analysis-note{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+  margin-top:10px;
+}
+
+.hand{
+  margin-bottom:19px;
+}
+
+.hand:last-child{
+  margin-bottom:0;
+}
+
+.hand-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:9px;
+}
+
+.hand-name{
+  font-size:20px;
+  font-weight:900;
+}
+
+.hand-total{
+  color:var(--gold);
+  font-weight:800;
+}
+
+.card-row{
+  min-height:70px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+
+.card{
+  width:50px;
+  height:68px;
+  border:0;
+  border-radius:8px;
+  background:#fff;
+  color:#111;
+  font-size:22px;
+  font-weight:900;
+  box-shadow:0 4px 10px rgba(0,0,0,.3);
+}
+
+.card.red{
+  color:#d12e38;
+}
+
+.empty-card{
+  width:50px;
+  height:68px;
+  border:1px dashed #55776d;
+  border-radius:8px;
+  opacity:.45;
+}
+
+.rank-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+}
+
+.rank-btn{
+  min-height:43px;
+  border:1px solid #41655b;
+  border-radius:10px;
+  background:#16392f;
+  color:#fff;
+  font-weight:800;
+  font-size:15px;
+}
+
+.rank-btn:active{
+  transform:scale(.95);
+  background:#245a4a;
+}
+
+.rank-btn:disabled{
+  opacity:.22;
+}
+
+.primary{
+  width:100%;
+  border:0;
+  border-radius:13px;
+  padding:15px;
+  background:linear-gradient(135deg,#c99b36,#f1d477);
+  color:#152019;
+  font-size:17px;
+  font-weight:900;
+}
+
+.secondary-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:9px;
+}
+
+.secondary{
+  border:1px solid #45675d;
+  border-radius:12px;
+  padding:13px 8px;
+  background:#14372e;
+  color:#fff;
+  font-weight:800;
+}
+
+.secondary.danger{
+  color:var(--danger);
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:7px;
+}
+
+.stat{
+  display:flex;
+  justify-content:space-between;
+  background:#102f27;
+  border-radius:10px;
+  padding:10px 12px;
+}
+
+.stat-count{
+  color:var(--gold);
+  font-weight:900;
+}
+
+.history-item{
+  padding:12px 0;
+  border-bottom:1px solid #24483e;
+  line-height:1.6;
+}
+
+.history-item:last-child{
+  border-bottom:0;
+}
+
+.round{
+  color:var(--gold);
+  font-weight:900;
+}
+
+.result{
+  font-weight:900;
+}
+
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:8px;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translateX(-50%);
+  background:#f1d477;
+  color:#162019;
+  padding:11px 16px;
+  border-radius:12px;
+  font-weight:800;
+  z-index:1000;
+  display:none;
+}
+
+@media(max-width:390px){
+  .rank-grid{
+    grid-template-columns:repeat(5,1fr);
+  }
+
+  .card,.empty-card{
+    width:45px;
+  }
 }
 </style>
 </head>
+
 <body>
+
 <div class="app">
-    <h1>♠ 百家樂牌靴分析器</h1>
-    <div class="subtitle">
-        8 副牌靴・416 張
+
+  <header class="header">
+    <h1>♠ 百家樂牌靴分析器 V2</h1>
+    <p>8 副牌靴・416 張・精確機率計算</p>
+  </header>
+
+
+  <!-- 牌靴 -->
+
+  <section class="panel center">
+
+    <div class="title">目前牌靴</div>
+
+    <div class="remaining" id="remainingText">
+      416 / 416
     </div>
-    <div class="card shoe">
-        <div class="title">
-            目前牌靴
-        </div>
-        <div class="remaining"
-             id="remaining">
-            416 / 416
-        </div>
-        <div class="bar">
-            <div id="bar"></div>
-        </div>
-        <div class="small">
-            已使用 <span id="used">0</span> 張
-        </div>
+
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
     </div>
-    <div class="card">
-        <div class="title">
-            下一局機率
-        </div>
-        <div class="probabilities">
-            <div class="prob">
-                <div class="banker">
-                    莊
-                </div>
-                <div class="banker"
-                     id="banker">
-                    45.86%
-                </div>
-            </div>
-            <div class="prob">
-                <div class="player">
-                    閒
-                </div>
-                <div class="player"
-                     id="player">
-                    44.62%
-                </div>
-            </div>
-            <div class="prob">
-                <div class="tie">
-                    和
-                </div>
-                <div class="tie"
-                     id="tie">
-                    9.52%
-                </div>
-            </div>
-        </div>
+
+    <div class="muted">
+      已使用 <span id="usedText">0</span> 張
     </div>
-    <div class="card">
-        <div class="title">
-            🃏 牌局紀錄
-        </div>
-        <div class="notice">
-            目前這個畫面是測試版。<br>
-            如果你能看到這個頁面，代表 GitHub Pages
-            可以正常使用。
-        </div>
-        <button class="gold"
-                onclick="test()">
-            測試按鈕
-        </button>
-        <button class="danger"
-                onclick="resetPage()">
-            清除測試
-        </button>
+
+  </section>
+
+
+  <!-- 機率 -->
+
+  <section class="panel">
+
+    <div class="title">下一局數學機率</div>
+
+    <div class="prob-grid">
+
+      <div class="prob">
+        <div class="prob-label">莊</div>
+        <div class="prob-value banker" id="bankerProb">--</div>
+      </div>
+
+      <div class="prob">
+        <div class="prob-label">閒</div>
+        <div class="prob-value player" id="playerProb">--</div>
+      </div>
+
+      <div class="prob">
+        <div class="prob-label">和</div>
+        <div class="prob-value tie" id="tieProb">--</div>
+      </div>
+
     </div>
-    <div class="card notice">
-        <strong>
-            下一階段
-        </strong>
-        <br><br>
-        加入 8 副牌靴實際牌張紀錄、<br>
-        莊／閒牌面輸入、Undo、歷史紀錄、<br>
-        剩餘牌張分析及機率計算。
+
+    <div class="analysis-note" id="analysisNote">
+      正在計算……
     </div>
+
+  </section>
+
+
+  <!-- 閒 -->
+
+  <section class="panel">
+
+    <div class="hand">
+
+      <div class="hand-head">
+        <div class="hand-name player">閒</div>
+
+        <div class="hand-total">
+          點數：
+          <span id="playerTotal">0</span>
+        </div>
+      </div>
+
+      <div class="card-row" id="playerCards"></div>
+
+      <div class="rank-grid" id="playerButtons"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- 莊 -->
+
+  <section class="panel">
+
+    <div class="hand">
+
+      <div class="hand-head">
+        <div class="hand-name banker">莊</div>
+
+        <div class="hand-total">
+          點數：
+          <span id="bankerTotal">0</span>
+        </div>
+      </div>
+
+      <div class="card-row" id="bankerCards"></div>
+
+      <div class="rank-grid" id="bankerButtons"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- 操作 -->
+
+  <section class="panel">
+
+    <button class="primary" onclick="recordRound()">
+      ✓ 記錄這一局
+    </button>
+
+    <div class="secondary-grid">
+
+      <button class="secondary" onclick="clearCurrent()">
+        清除目前輸入
+      </button>
+
+      <button class="secondary" onclick="undoRound()">
+        ↩ Undo
+      </button>
+
+    </div>
+
+    <div class="secondary-grid">
+
+      <button class="secondary danger" onclick="newShoe()">
+        🆕 新牌靴
+      </button>
+
+      <button class="secondary" onclick="showHelp()">
+        ℹ 使用說明
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- 剩餘牌 -->
+
+  <section class="panel">
+
+    <div class="title">剩餘牌張</div>
+
+    <div class="stats" id="stats"></div>
+
+  </section>
+
+
+  <!-- 歷史 -->
+
+  <section class="panel">
+
+    <div class="title">牌局紀錄</div>
+
+    <div id="history"></div>
+
+  </section>
+
 </div>
+
+
+<div class="toast" id="toast"></div>
+
+
 <script>
-let used = 0;
-function test(){
-    if(used < 416){
-        used++;
+
+/* =========================================================
+   基本設定
+========================================================= */
+
+const RANKS = [
+  "A","2","3","4","5","6","7",
+  "8","9","10","J","Q","K"
+];
+
+const VALUES = {
+  A:1,
+  "2":2,
+  "3":3,
+  "4":4,
+  "5":5,
+  "6":6,
+  "7":7,
+  "8":8,
+  "9":9,
+  "10":0,
+  J:0,
+  Q:0,
+  K:0
+};
+
+const TOTAL_CARDS = 416;
+const EACH_RANK = 32;
+
+
+/* =========================================================
+   狀態
+========================================================= */
+
+let remaining = {};
+let playerCards = [];
+let bankerCards = [];
+let history = [];
+
+
+/* =========================================================
+   建立 8 副新牌靴
+========================================================= */
+
+function freshShoe(){
+
+  remaining = {};
+
+  RANKS.forEach(rank=>{
+    remaining[rank] = EACH_RANK;
+  });
+
+  playerCards = [];
+  bankerCards = [];
+  history = [];
+
+  saveData();
+  renderAll();
+  calculateExactProbability();
+}
+
+
+/* =========================================================
+   讀取 / 儲存
+========================================================= */
+
+function saveData(){
+
+  try{
+
+    localStorage.setItem(
+      "baccarat_v2_remaining",
+      JSON.stringify(remaining)
+    );
+
+    localStorage.setItem(
+      "baccarat_v2_history",
+      JSON.stringify(history)
+    );
+
+  }catch(e){}
+}
+
+
+function loadData(){
+
+  try{
+
+    const r =
+      localStorage.getItem(
+        "baccarat_v2_remaining"
+      );
+
+    const h =
+      localStorage.getItem(
+        "baccarat_v2_history"
+      );
+
+    if(r && h){
+
+      remaining = JSON.parse(r);
+      history = JSON.parse(h);
+
+      playerCards = [];
+      bankerCards = [];
+
+      renderAll();
+      calculateExactProbability();
+
+      return;
     }
-    update();
+
+  }catch(e){}
+
+  freshShoe();
 }
-function resetPage(){
-    used = 0;
-    update();
+
+
+/* =========================================================
+   牌點
+========================================================= */
+
+function handTotal(cards){
+
+  let total = 0;
+
+  for(const card of cards){
+    total += VALUES[card];
+  }
+
+  return total % 10;
 }
-function update(){
-    const remaining =
-        416 - used;
-    document.getElementById(
-        "remaining"
-    ).textContent =
-        remaining + " / 416";
-    document.getElementById(
-        "used"
-    ).textContent =
-        used;
-    document.getElementById(
-        "bar"
-    ).style.width =
-        (remaining / 416 * 100) + "%";
+
+
+/* =========================================================
+   加入目前輸入
+========================================================= */
+
+function addCard(side,rank){
+
+  if(remaining[rank] <= 0){
+
+    toast("這張牌已經沒有剩餘牌了");
+    return;
+  }
+
+  const cards =
+    side === "player"
+    ? playerCards
+    : bankerCards;
+
+  if(cards.length >= 3){
+
+    toast("每手最多 3 張牌");
+    return;
+  }
+
+  cards.push(rank);
+
+  renderAll();
 }
-</script>
-</body>
-</html>
+
+
+/* ==========
