@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#071b16">
+<title>百家樂牌靴分析器</title>
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+body{
+    margin:0;
+    background:#071b16;
+    color:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei",sans-serif;
+}
+.app{
+    max-width:600px;
+    margin:auto;
+    padding:25px 15px 40px;
+}
+h1{
+    text-align:center;
+    color:#e8c568;
+    font-size:26px;
+    margin:10px 0 5px;
+}
+.subtitle{
+    text-align:center;
+    color:#9bb1aa;
+    font-size:13px;
+    margin-bottom:20px;
+}
+.card{
+    background:#0e2a22;
+    border:1px solid #285147;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:15px;
+}
+.title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:12px;
+}
+.shoe{
+    text-align:center;
+}
+.remaining{
+    font-size:34px;
+    font-weight:900;
+    color:#f2d77b;
+}
+.bar{
+    height:10px;
+    background:#1d4036;
+    border-radius:20px;
+    overflow:hidden;
+    margin:12px 0 6px;
+}
+.bar div{
+    height:100%;
+    background:#e1bc5d;
+    width:100%;
+}
+.small{
+    color:#9bb1aa;
+    font-size:13px;
+}
+.probabilities{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+}
+.prob{
+    background:#12352b;
+    border-radius:12px;
+    padding:12px 5px;
+    text-align:center;
+}
+.prob div:first-child{
+    color:#a7bbb4;
+    font-size:14px;
+}
+.prob div:last-child{
+    font-size:24px;
+    font-weight:900;
+    margin-top:5px;
+}
+.banker{
+    color:#ff8888;
+}
+.player{
+    color:#75adff;
+}
+.tie{
+    color:#55d49b;
+}
+button{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:14px;
+    font-size:16px;
+    font-weight:bold;
+    background:#183d32;
+    color:white;
+    margin-top:8px;
+}
+button:active{
+    transform:scale(.97);
+}
+.gold{
+    background:linear-gradient(135deg,#c99d3b,#f0d477);
+    color:#152219;
+}
+.danger{
+    color:#ff8989;
+}
+.notice{
+    text-align:center;
+    line-height:1.7;
+    color:#b4c5bf;
+    font-size:14px;
+}
+@media(max-width:380px){
+    h1{
+        font-size:23px;
+    }
+    .remaining{
+        font-size:29px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="app">
+    <h1>♠ 百家樂牌靴分析器</h1>
+    <div class="subtitle">
+        8 副牌靴・416 張
+    </div>
+    <div class="card shoe">
+        <div class="title">
+            目前牌靴
+        </div>
+        <div class="remaining"
+             id="remaining">
+            416 / 416
+        </div>
+        <div class="bar">
+            <div id="bar"></div>
+        </div>
+        <div class="small">
+            已使用 <span id="used">0</span> 張
+        </div>
+    </div>
+    <div class="card">
+        <div class="title">
+            下一局機率
+        </div>
+        <div class="probabilities">
+            <div class="prob">
+                <div class="banker">
+                    莊
+                </div>
+                <div class="banker"
+                     id="banker">
+                    45.86%
+                </div>
+            </div>
+            <div class="prob">
+                <div class="player">
+                    閒
+                </div>
+                <div class="player"
+                     id="player">
+                    44.62%
+                </div>
+            </div>
+            <div class="prob">
+                <div class="tie">
+                    和
+                </div>
+                <div class="tie"
+                     id="tie">
+                    9.52%
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="title">
+            🃏 牌局紀錄
+        </div>
+        <div class="notice">
+            目前這個畫面是測試版。<br>
+            如果你能看到這個頁面，代表 GitHub Pages
+            可以正常使用。
+        </div>
+        <button class="gold"
+                onclick="test()">
+            測試按鈕
+        </button>
+        <button class="danger"
+                onclick="resetPage()">
+            清除測試
+        </button>
+    </div>
+    <div class="card notice">
+        <strong>
+            下一階段
+        </strong>
+        <br><br>
+        加入 8 副牌靴實際牌張紀錄、<br>
+        莊／閒牌面輸入、Undo、歷史紀錄、<br>
+        剩餘牌張分析及機率計算。
+    </div>
+</div>
+<script>
+let used = 0;
+function test(){
+    if(used < 416){
+        used++;
+    }
+    update();
+}
+function resetPage(){
+    used = 0;
+    update();
+}
+function update(){
+    const remaining =
+        416 - used;
+    document.getElementById(
+        "remaining"
+    ).textContent =
+        remaining + " / 416";
+    document.getElementById(
+        "used"
+    ).textContent =
+        used;
+    document.getElementById(
+        "bar"
+    ).style.width =
+        (remaining / 416 * 100) + "%";
+}
+</script>
+</body>
+</html>
